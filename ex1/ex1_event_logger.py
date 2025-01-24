@@ -61,10 +61,11 @@ class EventList:
     A linked list of game events.
 
     Instance Attributes:
-        - # TODO add descriptions of instance attributes here
+        - first: the first event in the linked list
+        - last: the last event in the linked list
 
     Representation Invariants:
-        - # TODO add any appropriate representation invariants, if needed
+        - self.first is None == self.last is None
     """
     first: Optional[Event]
     last: Optional[Event]
@@ -82,12 +83,10 @@ class EventList:
             print(f"Location: {curr.id_num}, Command: {curr.next_command}")
             curr = curr.next
 
-    # TODO: Complete the methods below, based on the given descriptions. Do NOT change any of their specification.
-    #  That is, the function headers (parameters, return type, etc.) must NOT be changed.
     def is_empty(self) -> bool:
         """Return whether this event list is empty."""
 
-        # TODO: Your code below
+        return self.first is None
 
     def add_event(self, event: Event, command: Optional[str] = None) -> None:
         """Add the given new event to the end of this event list.
