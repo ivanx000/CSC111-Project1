@@ -54,6 +54,7 @@ class Event:
     next_command: Optional[str]
     next: Optional[Event]
     prev: Optional[Event]
+    # prev: Optional[Event]
 
 
 class EventList:
