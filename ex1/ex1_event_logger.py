@@ -94,21 +94,8 @@ class EventList:
         event in the game.
         """
         # Hint: You should update the previous node's <next_command> as needed
+
         # TODO: Your code below
-        if self.is_empty():
-            self.first = event
-            self.last = event
-            event.prev = None
-            event.next = None
-        else:
-            curr = self.last
-            curr.next = event
-            curr.next_command = command
-            event.prev = curr
-            event.next = None
-            self.last = event
-
-
 
     def remove_last_event(self) -> None:
         """Remove the last event from this event list.
