@@ -35,10 +35,10 @@ class AdventureGame:
 
     Instance Attributes:
         - current_location_id: integer value of the current location id
-        - ongiong:
+        - ongoing: boolean value to check if the game is still going
 
     Representation Invariants:
-        - # TODO add any appropriate representation invariants as needed
+        -
     """
 
     # Private Instance Attributes (do NOT remove these two attributes):
@@ -91,8 +91,10 @@ class AdventureGame:
             locations[loc_data['id']] = location_obj
 
         items = []
-        # TODO: Add Item objects to the items list; your code should be structured similarly to the loop above
-        # YOUR CODE BELOW
+        for item_data in data['items']:
+            item_obj = Item(item_data['name'], item_data['start_position'],
+                            item_data['target_position'], item_data['target_points'])
+            items.append(item_obj)
 
         return locations, items
 
@@ -101,8 +103,12 @@ class AdventureGame:
         If no ID is provided, return the Location object associated with the current location.
         """
 
-        # TODO: Complete this method as specified
-        # YOUR CODE BELOW
+        if loc_id is None:
+            return self._locations[self.current_location_id]
+        else:
+            for location_id in self._locations:
+                if location_id.id_num == loc_id:
+                    return self._locations[location_id]
 
 
 if __name__ == "__main__":

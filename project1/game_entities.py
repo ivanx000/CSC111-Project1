@@ -26,26 +26,42 @@ class Location:
     """A location in our text adventure game world.
 
     Instance Attributes:
-        - # TODO Describe each instance attribute here
+        - id_num: id of this location
+        - name: name of this location
+        - brief_description: brief description of this location
+        - long_description: long description of this location
+        - available_commands: a mapping of available commands at this location to
+                                the location executing that command would lead to
+        - items: a list of all the items at this location
+        - visited: a boolean value to check if this location has been visited
 
     Representation Invariants:
-        - # TODO Describe any necessary representation invariants
+        - self.name != ''
+        - self.brief_description != ''
+        - self.long_description != ''
     """
 
     # This is just a suggested starter class for Location.
     # You may change/add parameters and the data available for each Location object as you see fit.
-    #
     # The only thing you must NOT change is the name of this class: Location.
     # All locations in your game MUST be represented as an instance of this class.
 
-    def __init__(self, location_id, brief_description, long_description, available_commands, items,
+    id_num: int
+    name: str
+    brief_description: str
+    long_description: str
+    available_commands: dict[str, int]
+    items: list[str]
+    visited: bool
+
+    def __init__(self, location_id, name, brief_description, long_description, available_commands, items,
                  visited=False) -> None:
         """Initialize a new location.
 
-        # TODO Add more details here about the initialization if needed
         """
 
         self.id_num = location_id
+        self.name = name
         self.brief_description = brief_description
         self.long_description = long_description
         self.available_commands = available_commands
@@ -58,10 +74,13 @@ class Item:
     """An item in our text adventure game world.
 
     Instance Attributes:
-        - # TODO Describe each instance attribute here
+        - name: name of this item
+        - start_position: starting position of this item
+        - target_position: target position of this item
+        - target_points: points rewarded for finding this item
 
     Representation Invariants:
-        - # TODO Describe any necessary representation invariants
+        - self.name != ''
     """
 
     # NOTES:
