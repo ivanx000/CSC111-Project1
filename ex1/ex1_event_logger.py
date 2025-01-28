@@ -114,7 +114,14 @@ class EventList:
 
         # Hint: The <next_command> and <next> attributes for the new last event should be updated as needed
 
-        # TODO: Your code below
+        if self.first == self.last:
+            self.first = None
+            self.last = None
+        elif not self.is_empty():
+            new_last_event = self.last.prev
+            new_last_event.next = None
+            new_last_event.next_command = None
+            self.last = new_last_event
 
     def get_id_log(self) -> list[int]:
         """Return a list of all location IDs visited for each event in this list, in sequence."""
