@@ -101,6 +101,10 @@ class Item:
 # - Puzzle class to represent special locations (could inherit from Location class if it seems suitable)
 # - Player class
 # etc.
+@dataclass
+class Puzzle:
+    """A word puzzle in our text adventure game"""
+
 
 if __name__ == "__main__":
     pass
