@@ -36,6 +36,7 @@ class AdventureGame:
     Instance Attributes:
         - current_location_id: integer value of the current location id
         - ongoing: boolean value to check if the game is still going
+        - score: the players score
 
     Representation Invariants:
         -
@@ -48,6 +49,7 @@ class AdventureGame:
 
     _locations: dict[int, Location]
     _items: list[Item]
+    score: int
     current_location_id: int  # Suggested attribute, can be removed
     ongoing: bool  # Suggested attribute, can be removed
 
@@ -109,6 +111,14 @@ class AdventureGame:
             for location_id in self._locations:
                 if location_id.id_num == loc_id:
                     return self._locations[location_id]
+
+    def display_inventory(self) -> None:
+        """Displays each item the user currently has"""
+        ...
+
+    def quit(self) -> None:
+        """Quit functio, ends the game"""
+        self.ongoing = False
 
 
 if __name__ == "__main__":

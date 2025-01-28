@@ -76,8 +76,8 @@ class Item:
     Instance Attributes:
         - name: name of this item
         - start_position: starting position of this item
-        - target_position: target position of this item
-        - target_points: points rewarded for finding this item
+        - target_position: the location ID of where the item is to be deposited for credit
+        - target_points: points rewarded for depositing the item in target_position
 
     Representation Invariants:
         - self.name != ''
