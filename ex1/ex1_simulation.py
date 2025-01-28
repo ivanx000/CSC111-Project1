@@ -96,7 +96,10 @@ class SimpleAdventureGame:
         If no ID is provided, return the Location object associated with the current location.
         """
 
-        # TODO: Complete this method as specified. Do not modify any of this function's specifications.
+        if loc_id is None:
+            return self._locations[self.current_location_id]
+
+        return self._locations[loc_id]
 
 
 class AdventureGameSimulation:
