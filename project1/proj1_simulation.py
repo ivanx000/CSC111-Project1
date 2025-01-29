@@ -59,10 +59,13 @@ class AdventureGameSimulation:
         - all commands in the given list are valid commands at each associated location in the game
         """
 
-        # TODO: Complete this method as specified. For each command, generate the event and add
-        #  it to self._events.
-        # Hint: current_location.available_commands[command] will return the next location ID
-        # which executing <command> while in <current_location_id> leads to
+        for command in commands:
+            new_location_id = current_location.available_commands[command]
+            new_location = self._game.get_location(new_location_id)
+            new_event = Event(new_location_id, new_location.long_description, command)
+
+            self._events.add_event(new_event, command)
+            current_location = new_location
 
     def get_id_log(self) -> list[int]:
         """
