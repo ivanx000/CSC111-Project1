@@ -36,9 +36,9 @@ class AdventureGame:
     Instance Attributes:
         - current_location_id: integer value of the current location id
         - ongoing: boolean value to check if the game is still going
-        - score: the players score
+        - score: the players score, which can determine if they win or not
         - inventory: inventory of all the items the player currently has
-        - max_moves: the maximum number of moves
+        - time: the amount time the player has before the deadline
 
     Representation Invariants:
         -
@@ -53,7 +53,7 @@ class AdventureGame:
     _items: list[Item]
     inventory: list[Item]
     score: int
-    max_moves: int
+    time: int
     current_location_id: int  # Suggested attribute, can be removed
     ongoing: bool  # Suggested attribute, can be removed
 
@@ -83,7 +83,7 @@ class AdventureGame:
 
         self.inventory = []
         self.score = 0
-        self.max_moves = 15
+        self.time = 15
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -139,11 +139,21 @@ class AdventureGame:
 
     def drop_item(self) -> None:
         """Handles drop item case"""
-        ...
+        if not self.inventory:  # No items in inventory
+            print("There are no items to drop.")
+        else:  # There are items
+            ...
 
     def display_score(self) -> None:
         """Displays the current score"""
         print("Your score is: " + str(self.score))
+
+    def update_time(self, command: str, curr_location: Location) -> None:
+        """Updates the time based on the choice of the user"""
+        if command in menu:
+            self.time -= menu[command]
+        if command in curr_location.available_commands:
+            self.time -= 15
 
     def quit(self) -> None:
         """Quit function, ends the game"""
@@ -163,18 +173,28 @@ if __name__ == "__main__":
 
     game_log = EventList()  # This is REQUIRED as one of the baseline requirements
     game = AdventureGame('game_data.json', 1)  # load data, setting initial location ID to 1
-    menu = ["look", "inventory", "drop", "score", "undo",
-            "log", "quit"]  # Regular menu options available at each location
+    menu = {
+        "look": 5,
+        "inventory": 5,
+        "drop": 5,
+        "score": 5,
+        "undo": 0,
+        "log": 5,
+        "quit": 0
+    }  # A mapping of menu options to the time (in minutes) it takes for each option
     choice = None
 
+    # Objective, get back to dorm before deadline with required items, return extra items for more points
     # 1 2 3
     # 4 -1 -1
     # 5 6 7
 
     # Note: You may modify the code below as needed; the following starter code is just a suggestion
-    while game.ongoing and game.max_moves > 0:
+    while game.ongoing and game.time > 0:
         # Note: If the loop body is getting too long, you should split the body up into helper functions
         # for better organization. Part of your marks will be based on how well-organized your code is.
+
+        # Note: Print starting messages
 
         location = game.get_location()
 
@@ -225,7 +245,7 @@ if __name__ == "__main__":
         else:
             # Handle non-menu actions
             result = location.available_commands[choice]
-            game.current_location_id = result
+            game.current_location_id = result  # Updates location
 
             # TODO: Add in code to deal with actions which do not change the location (e.g. taking or using an item)
             # TODO: Add in code to deal with special locations (e.g. puzzles) as needed for your game
