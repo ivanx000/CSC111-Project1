@@ -37,6 +37,8 @@ class AdventureGame:
         - current_location_id: integer value of the current location id
         - ongoing: boolean value to check if the game is still going
         - score: the players score
+        - inventory: inventory of all the items the player currently has
+        - max_moves: the maximum number of moves
 
     Representation Invariants:
         -
@@ -49,7 +51,9 @@ class AdventureGame:
 
     _locations: dict[int, Location]
     _items: list[Item]
+    inventory: list[Item]
     score: int
+    max_moves: int
     current_location_id: int  # Suggested attribute, can be removed
     ongoing: bool  # Suggested attribute, can be removed
 
@@ -76,6 +80,10 @@ class AdventureGame:
         # Suggested attributes (you can remove and track these differently if you wish to do so):
         self.current_location_id = initial_location_id  # game begins at this location
         self.ongoing = True  # whether the game is ongoing
+
+        self.inventory = []
+        self.score = 0
+        self.max_moves = 15
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -115,10 +123,27 @@ class AdventureGame:
     def display_inventory(self) -> None:
         """Displays each item the user currently has"""
         items = ""
-        for item in self._items:
-            items += " " + item.name
+        for item_obj in self.inventory:
+            items += " " + item_obj.name
 
         print("Inventory:" + items)
+
+    def display_items(self, curr_location: Location) -> None:
+        """Displays each item the player picked up and updates inventory"""
+
+        for item_obj in self._items:
+            if item_obj.name in curr_location.items:
+                print("You picked up a: " + item_obj.name)
+                print("You need to drop " + item_obj.name + " at: " + self._locations[item_obj.target_position].name)
+                self.inventory.append(item_obj)
+
+    def drop_item(self) -> None:
+        """Handles drop item case"""
+        ...
+
+    def display_score(self) -> None:
+        """Displays the current score"""
+        print("Your score is: " + str(self.score))
 
     def quit(self) -> None:
         """Quit function, ends the game"""
@@ -138,7 +163,8 @@ if __name__ == "__main__":
 
     game_log = EventList()  # This is REQUIRED as one of the baseline requirements
     game = AdventureGame('game_data.json', 1)  # load data, setting initial location ID to 1
-    menu = ["look", "inventory", "score", "undo", "log", "quit"]  # Regular menu options available at each location
+    menu = ["look", "inventory", "drop", "score", "undo",
+            "log", "quit"]  # Regular menu options available at each location
     choice = None
 
     # 1 2 3
@@ -146,21 +172,24 @@ if __name__ == "__main__":
     # 5 6 7
 
     # Note: You may modify the code below as needed; the following starter code is just a suggestion
-    while game.ongoing:
+    while game.ongoing and game.max_moves > 0:
         # Note: If the loop body is getting too long, you should split the body up into helper functions
         # for better organization. Part of your marks will be based on how well-organized your code is.
 
         location = game.get_location()
 
-        # TODO: Add new Event to game log to represent current game location
-        #  Note that the <choice> variable should be the command which led to this event
-        # YOUR CODE HERE
+        curr_event = Event(location.id_num, location.long_description, choice, None, None)
+        game_log.add_event(curr_event, choice)
 
         if location.visited:
-            print(location.long_description)
-        else:
             print(location.brief_description)
+        else:
+            print(location.long_description)
 
+        # If there is an item at the location they are at, they automatically pick it up.
+        # If they pick up an item, it tells them what they picked up and where they need to drop it.
+        if location.items:
+            game.display_items(location)
         # Display possible actions at this location
         print("What to do? Choose from: look, inventory, score, undo, log, quit")
         print("At this location, you can also:")
@@ -178,11 +207,13 @@ if __name__ == "__main__":
 
         if choice in menu:
             if choice == "look":
-                ...
+                print(location.long_description)
             if choice == "inventory":
                 game.display_inventory()
+            if choice == "drop":
+                game.drop_item()
             if choice == "score":
-                ...
+                game.display_score()
             if choice == "undo":
                 # Note: For the "undo" command, remember to manipulate the game_log event list to keep it up-to-date
                 ...

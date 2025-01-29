@@ -4,7 +4,7 @@
       "id": 1,
       "name": "Bahen 1F",
       "brief_description": "You are on the first floor of the Bahen Center. There is an exit from the building to St. George street to the East.",
-      "long_description": "You are on the first floor of the Bahen Center. It's usually crowded at this time of the day, but today it's eerily quiet. Only a few students are studying at the table near the doors. You better not disturb them. You see something shiny on the ground -- looks like a toonie? There is an exit from the building to St. George street to the East.",
+      "long_description": "You are on the first floor of the Bahen Center. It's usually crowded at this time of the day, but today it's eerily quiet. Only a few students are studying at the table near the doors. You better not disturb them. You see something shiny on the ground -- looks like a toonie? There is an exit from the building to the East.",
       "available_commands": {
         "go south": 4,
         "go east": 2
