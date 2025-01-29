@@ -137,6 +137,10 @@ if __name__ == "__main__":
     menu = ["look", "inventory", "score", "undo", "log", "quit"]  # Regular menu options available at each location
     choice = None
 
+    # 1 2 3
+    # 4 -1 -1
+    # 5 6 7
+
     # Note: You may modify the code below as needed; the following starter code is just a suggestion
     while game.ongoing:
         # Note: If the loop body is getting too long, you should split the body up into helper functions
@@ -148,9 +152,10 @@ if __name__ == "__main__":
         #  Note that the <choice> variable should be the command which led to this event
         # YOUR CODE HERE
 
-        # TODO: Depending on whether or not it's been visited before,
-        #  print either full description (first time visit) or brief description (every subsequent visit) of location
-        # YOUR CODE HERE
+        if location.visited:
+            print(location.long_description)
+        else:
+            print(location.brief_description)
 
         # Display possible actions at this location
         print("What to do? Choose from: look, inventory, score, undo, log, quit")
@@ -168,11 +173,19 @@ if __name__ == "__main__":
         print("You decided to:", choice)
 
         if choice in menu:
-            # TODO: Handle each menu command as appropriate
             # Note: For the "undo" command, remember to manipulate the game_log event list to keep it up-to-date
+            if choice == "look":
+                ...
+            if choice == "inventory":
+                ...
+            if choice == "score":
+                ...
+            if choice == "undo":
+                ...
             if choice == "log":
                 game_log.display_events()
-            # ENTER YOUR CODE BELOW to handle other menu commands (remember to use helper functions as appropriate)
+            if choice == "quit":
+                ...
 
         else:
             # Handle non-menu actions
