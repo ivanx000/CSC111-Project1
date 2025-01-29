@@ -103,9 +103,9 @@ class EventList:
         else:
             curr = self.last
             curr.next = event
-            curr.next_command = command
             event.prev = curr
             event.next = None
+            event.next_command = command
             self.last = event
 
     def remove_last_event(self) -> None:
@@ -126,9 +126,14 @@ class EventList:
     def get_id_log(self) -> list[int]:
         """Return a list of all location IDs visited for each event in this list, in sequence."""
 
-        # TODO: Your code below
+        curr = self.first
+        location_ids = []
 
-    # Note: You may add other methods to this class as needed but DO NOT CHANGE THE SPECIFICATION OF ANY OF THE ABOVE
+        while curr is not None:
+            location_ids.append(curr.id_num)
+            curr = curr.next
+
+        return location_ids
 
 
 if __name__ == "__main__":
