@@ -109,15 +109,19 @@ class AdventureGame:
             return self._locations[self.current_location_id]
         else:
             for location_id in self._locations:
-                if location_id.id_num == loc_id:
+                if location_id == loc_id:
                     return self._locations[location_id]
 
     def display_inventory(self) -> None:
         """Displays each item the user currently has"""
-        ...
+        items = ""
+        for item in self._items:
+            items += " " + item.name
+
+        print("Inventory:" + items)
 
     def quit(self) -> None:
-        """Quit functio, ends the game"""
+        """Quit function, ends the game"""
         self.ongoing = False
 
 
@@ -173,19 +177,19 @@ if __name__ == "__main__":
         print("You decided to:", choice)
 
         if choice in menu:
-            # Note: For the "undo" command, remember to manipulate the game_log event list to keep it up-to-date
             if choice == "look":
                 ...
             if choice == "inventory":
-                ...
+                game.display_inventory()
             if choice == "score":
                 ...
             if choice == "undo":
+                # Note: For the "undo" command, remember to manipulate the game_log event list to keep it up-to-date
                 ...
             if choice == "log":
                 game_log.display_events()
             if choice == "quit":
-                ...
+                game.quit()
 
         else:
             # Handle non-menu actions
