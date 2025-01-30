@@ -72,8 +72,9 @@
       "brief_description": "You are at your dorm room",
       "long_description": "You are at your dorm room",
       "available_commands": {
-
-      }
+        "go west": 6
+      },
+      "items": []
     }
 
   ],

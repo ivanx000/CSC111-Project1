@@ -153,7 +153,7 @@ class AdventureGame:
         if command in menu:
             self.time -= menu[command]
         if command in curr_location.available_commands:
-            self.time -= 15
+            self.time -= 15  # A change in location is 15 minutes
 
     def quit(self) -> None:
         """Quit function, ends the game"""
