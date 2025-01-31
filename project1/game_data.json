@@ -7,7 +7,8 @@
       "long_description": "You are on the first floor of the Bahen Center. It's usually crowded at this time of the day, but today it's eerily quiet. Only a few students are studying at the table near the doors. You better not disturb them. You see something on the ground -- looks like a Phone? There is an exit from the building to the East.",
       "available_commands": {
         "go south": 4,
-        "go east": 2
+        "go east": 2,
+        "pick up": -1
       },
       "items": ["Phone"]
     },
@@ -18,7 +19,8 @@
       "long_description": "You are in a quiet library study room, surrounded by neatly arranged desks and chairs. You found your USB Drive and Laptop Charger at one of the desks. Perfect! This is exactly what you needed to submit your project. There are exits to the East and West",
       "available_commands": {
         "go east": 3,
-        "go west": 1
+        "go west": 1,
+        "pick up": -1
       },
       "items": ["USB Drive", "Laptop Charger"]
     },
@@ -40,7 +42,8 @@
       "long_description": "You are in a Subway restaurant. The sun is shining brightly outside, and a few students are walking in and out. You see your Lucky Mug at a table! There is an exit from the building to the North and South",
       "available_commands": {
         "go north": 1,
-        "go south": 5
+        "go south": 5,
+        "pick up": -1
       },
       "items": ["Lucky Mug"]
     },
@@ -51,7 +54,8 @@
       "long_description": "You are at the lost and found. This is where you can return lost items that you found.",
       "available_commands": {
         "go north": 4,
-        "go east": 6
+        "go east": 6,
+        "drop": -1
       },
       "items": []
     },
@@ -62,17 +66,19 @@
       "long_description": "You are at Convocation Hall. A class just ended and everyone is leaving the building. You notice a Wallet on the floor, someone must have dropped it. You pick it up, but this item is not required for your project. Returning it seems like the right thing to do.",
       "available_commands": {
         "go east": 7,
-        "go west": 5
+        "go west": 5,
+        "pick up": -1
       },
       "items": ["Wallet"]
     },
     {
       "id": 7,
       "name": "Dorm Room",
-      "brief_description": "You are at your dorm room",
-      "long_description": "You are at your dorm room",
+      "brief_description": "You are at your dorm room! This is where you can submit your assignment.",
+      "long_description": "You are at your dorm room! This is where you can submit your assignment.",
       "available_commands": {
-        "go west": 6
+        "go west": 6,
+        "submit": -1
       },
       "items": []
     }

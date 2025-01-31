@@ -54,6 +54,7 @@ class AdventureGame:
     inventory: list[Item]
     score: int
     time: int
+    required_items: list[str]
     current_location_id: int  # Suggested attribute, can be removed
     ongoing: bool  # Suggested attribute, can be removed
 
@@ -82,8 +83,9 @@ class AdventureGame:
         self.ongoing = True  # whether the game is ongoing
 
         self.inventory = []
+        self.required_items = ["USB Drive", "Laptop Charger", "Lucky Mug"]
         self.score = 0
-        self.time = 15
+        self.time = 300
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -96,8 +98,9 @@ class AdventureGame:
 
         locations = {}
         for loc_data in data['locations']:  # Go through each element associated with the 'locations' key in the file
-            location_obj = Location(loc_data['id'], loc_data['brief_description'], loc_data['long_description'],
-                                    loc_data['available_commands'], loc_data['items'])
+            location_obj = Location(loc_data['id'], loc_data['name'], loc_data['brief_description'],
+                                    loc_data['long_description'], loc_data['available_commands'],
+                                    loc_data['items'])
             locations[loc_data['id']] = location_obj
 
         items = []
@@ -134,7 +137,10 @@ class AdventureGame:
         for item_obj in self._items:
             if item_obj.name in curr_location.items:
                 print("You picked up a: " + item_obj.name)
-                print("You need to drop " + item_obj.name + " at: " + self._locations[item_obj.target_position].name)
+                if item_obj.name in self.required_items:
+                    print("You need this item to submit your project! Bring this back with you to your dorm room.")
+                else:
+                    print("You can drop " + item_obj.name + " at: " + self._locations[item_obj.target_position].name)
                 self.inventory.append(item_obj)
 
     def drop_item(self) -> None:
@@ -142,7 +148,10 @@ class AdventureGame:
         if not self.inventory:  # No items in inventory
             print("There are no items to drop.")
         else:  # There are items
-            ...
+            print("Available items to drop: ")
+            for item_obj in self.inventory:
+                print("-" + item_obj.name)
+            drop_choice = input("\nEnter item: ").lower().strip()
 
     def display_score(self) -> None:
         """Displays the current score"""
@@ -187,7 +196,6 @@ if __name__ == "__main__":
     menu = {
         "look": 5,
         "inventory": 5,
-        "drop": 5,
         "score": 5,
         "undo": 0,
         "log": 5,
@@ -241,8 +249,6 @@ if __name__ == "__main__":
                 print(location.long_description)
             if choice == "inventory":
                 game.display_inventory()
-            if choice == "drop":
-                game.drop_item()
             if choice == "score":
                 game.display_score()
             if choice == "undo":
@@ -254,8 +260,12 @@ if __name__ == "__main__":
 
         else:
             # Handle non-menu actions
-            result = location.available_commands[choice]
-            game.current_location_id = result  # Updates location
-
-            # TODO: Add in code to deal with actions which do not change the location (e.g. taking or using an item)
-            # TODO: Add in code to deal with special locations (e.g. puzzles) as needed for your game
+            if choice == "drop":
+                game.drop_item()
+            elif choice == "pick up":
+                ...
+            elif choice == "submit":
+                ...
+            else:
+                result = location.available_commands[choice]
+                game.current_location_id = result  # Updates location
