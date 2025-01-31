@@ -308,7 +308,7 @@ if __name__ == "__main__":
             elif choice == "pick up":
                 game.pickup_items(location)  # only locations with items have the available command "pick up"
             elif choice == "submit":
-                ...
+                game.submit()
             else:
                 result = location.available_commands[choice]
                 game.current_location_id = result  # Updates location
