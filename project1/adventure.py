@@ -175,6 +175,10 @@ class AdventureGame:
         if command in curr_location.available_commands:
             self.time -= 10  # A command for specific locations account for more time compared to menu options
 
+    def submit(self) -> None:
+        """Win condition of the game, submits the assignment"""
+        ...
+
     def quit(self) -> None:
         """Quit function, ends the game"""
         self.ongoing = False
@@ -187,6 +191,11 @@ class AdventureGame:
             return
 
         last_event = game_log.last
+        # Gives the user back the time that they lost from the command they chose
+        if last_event.prev.next_command in menu:  # menu command
+            self.time += menu[last_event.prev.next_command]
+        else:  # the next_command is a location specific command
+            self.time += 10
         curr_event.id_num = last_event.prev.id_num
         game_log.remove_last_event()
 
