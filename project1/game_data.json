@@ -3,7 +3,7 @@
     {
       "id": 1,
       "name": "Bahen 1F",
-      "brief_description": "You are on the first floor of the Bahen Center. There is an exit from the building to St. George street to the East.",
+      "brief_description": "You are on the first floor of the Bahen Center. There is an exit from the building to the East.",
       "long_description": "You are on the first floor of the Bahen Center. It's usually crowded at this time of the day, but today it's eerily quiet. Only a few students are studying at the table near the doors. You better not disturb them. You see something on the ground -- looks like a Phone? There is an exit from the building to the East.",
       "available_commands": {
         "go south": 4,
@@ -15,8 +15,8 @@
     {
       "id": 2,
       "name": "Library Study Room",
-      "brief_description": "You are in the library study room.",
-      "long_description": "You are in a quiet library study room, surrounded by neatly arranged desks and chairs. You found your USB Drive and Laptop Charger at one of the desks. Perfect! This is exactly what you needed to submit your project. There are exits to the East and West",
+      "brief_description": "You are in the library study room. There are exits to the East and West.",
+      "long_description": "You are in a quiet library study room, surrounded by neatly arranged desks and chairs. You see a USB Drive and Laptop Charger at one of the desks. They look like they could belong to you. There are exits to the East and West.",
       "available_commands": {
         "go east": 3,
         "go west": 1,
@@ -28,10 +28,11 @@
       "id": 3,
       "name": "Starbucks",
       "brief_description": "You are in a Starbucks.",
-      "long_description": "You are inside a Starbucks outside the library. The coffee smells good, and you hear the faint sound of baristas calling out names for orders.",
+      "long_description": "You are inside a Starbucks outside the library. The coffee smells good, and you hear the faint sound of baristas calling out names for orders. You see someone asking around if they saw a lost phone anywhere. Maybe you can help him? There are exits to ",
       "available_commands": {
         "go west": 2,
-        "buy coffee": 3
+        "buy coffee": 3,
+        "drop": -1
       },
       "items": []
     },
@@ -89,8 +90,8 @@
       "name": "Phone",
       "description": "There is a Phone on the ground. Someone must have dropped it.",
       "start_position": 1,
-      "target_position": 4,
-      "target_points": 25
+      "target_position": 3,
+      "target_points": 15
     },
     {
       "name": "USB Drive",

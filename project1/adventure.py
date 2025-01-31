@@ -85,7 +85,7 @@ class AdventureGame:
         self.inventory = []
         self.required_items = ["USB Drive", "Laptop Charger", "Lucky Mug"]
         self.score = 0
-        self.time = 300
+        self.time = 120  # 120 minutes is less than a couple of hours to submit the assignment
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -131,10 +131,12 @@ class AdventureGame:
 
         print("Inventory:" + items)
 
-    def display_items(self, curr_location: Location) -> None:
+    def pickup_items(self, curr_location: Location) -> None:
         """Displays each item the player picked up and updates inventory"""
 
         for item_obj in self._items:
+            # This is to account for the fact that the items are listed as
+            # strings in the location data instead of item objects
             if item_obj.name in curr_location.items:
                 print("You picked up a: " + item_obj.name)
                 if item_obj.name in self.required_items:
@@ -142,6 +144,15 @@ class AdventureGame:
                 else:
                     print("You can drop " + item_obj.name + " at: " + self._locations[item_obj.target_position].name)
                 self.inventory.append(item_obj)
+
+    def display_items(self, curr_location: Location) -> None:
+        """Displays each item at the players current location"""
+
+        for item_obj in self._items:
+            # This is to account for the fact that the items are listed as
+            # strings in the location data instead of item objects
+            if item_obj.name in curr_location.items:
+                print("There is a " + item_obj.name + " at this location")
 
     def drop_item(self) -> None:
         """Handles drop item case"""
@@ -162,7 +173,7 @@ class AdventureGame:
         if command in menu:
             self.time -= menu[command]
         if command in curr_location.available_commands:
-            self.time -= 15  # A change in location is 15 minutes
+            self.time -= 10  # A command for specific locations account for more time compared to menu options
 
     def quit(self) -> None:
         """Quit function, ends the game"""
@@ -204,12 +215,9 @@ if __name__ == "__main__":
     choice = None
 
     # Objective, get back to dorm before deadline with required items, return extra items for more points
-    # 1 2 3
-    # 4 -1 -1
-    # 5 6 7
 
     # Note: You may modify the code below as needed; the following starter code is just a suggestion
-    while game.ongoing and game.time > 0:
+    while game.ongoing:
         # Note: If the loop body is getting too long, you should split the body up into helper functions
         # for better organization. Part of your marks will be based on how well-organized your code is.
 
@@ -225,10 +233,10 @@ if __name__ == "__main__":
         else:
             print(location.long_description)
 
-        # If there is an item at the location they are at, they automatically pick it up.
-        # If they pick up an item, it tells them what they picked up and where they need to drop it.
+        # If there is an item avaiable at the location to pick up, tell them
         if location.items:
             game.display_items(location)
+
         # Display possible actions at this location
         print("What to do? Choose from: look, inventory, score, undo, log, quit")
         print("At this location, you can also:")
@@ -263,9 +271,11 @@ if __name__ == "__main__":
             if choice == "drop":
                 game.drop_item()
             elif choice == "pick up":
-                ...
+                game.pickup_items(location)  # only locations with items have the available command "pick up"
             elif choice == "submit":
                 ...
             else:
                 result = location.available_commands[choice]
                 game.current_location_id = result  # Updates location
+
+        game.update_time(choice, location)
