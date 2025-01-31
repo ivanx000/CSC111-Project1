@@ -54,7 +54,7 @@ class AdventureGame:
     inventory: list[Item]
     score: int
     time: int
-    required_items: list[str]
+    required_items: set[str]
     current_location_id: int  # Suggested attribute, can be removed
     ongoing: bool  # Suggested attribute, can be removed
 
@@ -83,7 +83,7 @@ class AdventureGame:
         self.ongoing = True  # whether the game is ongoing
 
         self.inventory = []
-        self.required_items = ["USB Drive", "Laptop Charger", "Lucky Mug"]
+        self.required_items = {"USB Drive", "Laptop Charger", "Lucky Mug"}
         self.score = 0
         self.time = 120  # 120 minutes is less than a couple of hours to submit the assignment
 
@@ -163,6 +163,14 @@ class AdventureGame:
             for item_obj in self.inventory:
                 print("-" + item_obj.name)
             drop_choice = input("\nEnter item: ").lower().strip()
+            while drop_choice not in self.inventory:
+                print("You do not have that item; try again.")
+                drop_choice = input("\nEnter action: ").lower().strip()
+
+            print("You decided to drop: " + drop_choice)
+            for item_obj in self.inventory:
+                if item_obj.name == drop_choice:
+                    self.inventory.remove(item_obj)
 
     def display_score(self) -> None:
         """Displays the current score"""
@@ -177,7 +185,25 @@ class AdventureGame:
 
     def submit(self) -> None:
         """Win condition of the game, submits the assignment"""
-        ...
+        inventory_names = {item.name for item in self.inventory}
+        if self.required_items.issubset(inventory_names):  # Player has all the required items
+            if self.time > 0:  # Player returned all the items on time
+                print("Congratulations! You made it back to your dorm room in "
+                      "time with all your items and you submitted your assignment on time.")
+                game.quit()
+            else:  # Player has all items but did not make it in time
+                if (self.time + self.score) > 0:  # Player accumulated enough points so they still win
+                    ...
+                else:  # Player just loses
+                    print("You made it back with all your items, but the deadline has already passed. You failed.")
+                    game.quit()
+        else:  # Player does not have all the required items
+            missing_items = list(self.required_items - inventory_names)
+            print("The items you are missing are:")
+            for missing in missing_items:
+                print("- " + missing)
+
+            print("Please come back with the required items.")
 
     def quit(self) -> None:
         """Quit function, ends the game"""
@@ -192,9 +218,9 @@ class AdventureGame:
 
         last_event = game_log.last
         # Gives the user back the time that they lost from the command they chose
-        if last_event.prev.next_command in menu:  # menu command
+        if last_event.prev.next_command in menu:  # next_command is a menu command
             self.time += menu[last_event.prev.next_command]
-        else:  # the next_command is a location specific command
+        else:  # next_command is a location specific command
             self.time += 10
         curr_event.id_num = last_event.prev.id_num
         game_log.remove_last_event()
