@@ -159,6 +159,17 @@ class AdventureGame:
         """Quit function, ends the game"""
         self.ongoing = False
 
+    def undo(self) -> None:
+        """Undo the player's most recent action."""
+
+        if game_log.is_empty():
+            print("There aren't any actions to undo!")
+            return
+
+        last_event = game_log.last
+        curr_event.id_num = last_event.prev.id_num
+        game_log.remove_last_event()
+
 
 if __name__ == "__main__":
 
@@ -235,8 +246,7 @@ if __name__ == "__main__":
             if choice == "score":
                 game.display_score()
             if choice == "undo":
-                # Note: For the "undo" command, remember to manipulate the game_log event list to keep it up-to-date
-                ...
+                game.undo()
             if choice == "log":
                 game_log.display_events()
             if choice == "quit":
