@@ -41,7 +41,8 @@ class AdventureGame:
         - time: the amount time the player has before the deadline
 
     Representation Invariants:
-        -
+        - self.score >= 0
+        - self.time >= 0
     """
 
     # Private Instance Attributes (do NOT remove these two attributes):
@@ -123,6 +124,9 @@ class AdventureGame:
                 if location_id == loc_id:
                     return self._locations[location_id]
 
+            # If no Location object has the provided location ID, return the current location id
+            return self._locations[self.current_location_id]
+
     def display_inventory(self) -> None:
         """Displays each item the user currently has"""
         items = ""
@@ -159,11 +163,13 @@ class AdventureGame:
         if not self.inventory:  # No items in inventory
             print("There are no items to drop.")
         else:  # There are items
+            possible_items = []
             print("Available items to drop: ")
             for item_obj in self.inventory:
                 print("-" + item_obj.name)
+                possible_items.append(item_obj.name)
             drop_choice = input("\nEnter item: ").lower().strip()
-            while drop_choice not in self.inventory:
+            while drop_choice not in possible_items:
                 print("You do not have that item; try again.")
                 drop_choice = input("\nEnter item: ").lower().strip()
 
@@ -235,9 +241,10 @@ class AdventureGame:
 
     def encountered_puzzle(self) -> None:
         """Handles puzzle case"""
+        possible_choices = ['yes', 'no']
         print("You have encountered a puzzle! Would you like to do it?")
         puzzle_choice = input("\nEnter Yes/No: ").lower().strip()
-        while puzzle_choice != "yes" or puzzle_choice != "no":
+        while puzzle_choice not in possible_choices:
             print("That was an invalid input; try again.")
             puzzle_choice = input("\nEnter Yes/No: ").lower().strip()
 

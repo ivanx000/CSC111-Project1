@@ -46,7 +46,7 @@ class AdventureGameSimulation:
         self._game = AdventureGame(game_data_file, initial_location_id)
 
         initial_location = self._game.get_location()
-        first_event = Event(initial_location_id, initial_location.long_description)
+        first_event = Event(initial_location_id, initial_location.long_description, None, None, None)
         self._events.add_event(first_event)
 
         self.generate_events(commands, initial_location)
