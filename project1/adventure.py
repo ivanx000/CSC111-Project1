@@ -21,7 +21,7 @@ from __future__ import annotations
 import json
 from typing import Optional
 
-from game_entities import Location, Item
+from game_entities import Location, Item, Puzzle
 from proj1_event_logger import Event, EventList
 
 
@@ -100,7 +100,7 @@ class AdventureGame:
         for loc_data in data['locations']:  # Go through each element associated with the 'locations' key in the file
             location_obj = Location(loc_data['id'], loc_data['name'], loc_data['brief_description'],
                                     loc_data['long_description'], loc_data['available_commands'],
-                                    loc_data['items'])
+                                    loc_data['items'], loc_data['Puzzle'])
             locations[loc_data['id']] = location_obj
 
         items = []
@@ -165,7 +165,7 @@ class AdventureGame:
             drop_choice = input("\nEnter item: ").lower().strip()
             while drop_choice not in self.inventory:
                 print("You do not have that item; try again.")
-                drop_choice = input("\nEnter action: ").lower().strip()
+                drop_choice = input("\nEnter item: ").lower().strip()
 
             print("You decided to drop: " + drop_choice)
             for item_obj in self.inventory:
@@ -193,7 +193,10 @@ class AdventureGame:
                 game.quit()
             else:  # Player has all items but did not make it in time
                 if (self.time + self.score) > 0:  # Player accumulated enough points so they still win
-                    ...
+                    print("You made it back with all your items, but the deadline has already passed. "
+                          "However, the instructor decided to give you an extension due to your extra points. "
+                          "Congratulations!")
+                    game.quit()
                 else:  # Player just loses
                     print("You made it back with all your items, but the deadline has already passed. You failed.")
                     game.quit()
@@ -225,27 +228,55 @@ class AdventureGame:
         curr_event.id_num = last_event.prev.id_num
         game_log.remove_last_event()
 
+    def display_time(self) -> None:
+        """Displays the amount of time before deadline"""
+
+        print("You have " + str(self.time) + " minutes left before the deadline.")
+
+    def encountered_puzzle(self) -> None:
+        """Handles puzzle case"""
+        print("You have encountered a puzzle! Would you like to do it?")
+        puzzle_choice = input("\nEnter Yes/No: ").lower().strip()
+        while puzzle_choice != "yes" or puzzle_choice != "no":
+            print("That was an invalid input; try again.")
+            puzzle_choice = input("\nEnter Yes/No: ").lower().strip()
+
+        if puzzle_choice == "yes":
+            current_puzzle = Puzzle()
+            print("Here is a scrambled word: " + current_puzzle.scrambled)
+            print("You have " + str(current_puzzle.tries) + " to unscramble this word.")
+            while current_puzzle.tries > 0:
+                guess = input("\nEnter guess: ").lower().strip()
+                if guess == current_puzzle.random_word:
+                    print("Congratulations! You unscrambled the word " + current_puzzle.random_word + ".")
+                    print("You gained " + str(current_puzzle.points) + " points.")
+                    return
+                current_puzzle.tries -= 1
+
+        print("You failed the puzzle. Better luck next time!")
+
 
 if __name__ == "__main__":
 
     # When you are ready to check your work with python_ta, uncomment the following lines.
     # (Delete the "#" and space before each line.)
     # IMPORTANT: keep this code indented inside the "if __name__ == '__main__'" block
-    # import python_ta
-    # python_ta.check_all(config={
-    #     'max-line-length': 120,
-    #     'disable': ['R1705', 'E9998', 'E9999']
-    # })
+    import python_ta
+    python_ta.check_all(config={
+        'max-line-length': 120,
+        'disable': ['R1705', 'E9998', 'E9999']
+    })
 
     game_log = EventList()  # This is REQUIRED as one of the baseline requirements
     game = AdventureGame('game_data.json', 1)  # load data, setting initial location ID to 1
     menu = {
         "look": 5,
         "inventory": 5,
-        "score": 5,
+        "score": 0,
         "undo": 0,
-        "log": 5,
-        "quit": 0
+        "log": 0,
+        "quit": 0,
+        "time": 0
     }  # A mapping of menu options to the time (in minutes) it takes for each option
     choice = None
 
@@ -265,15 +296,19 @@ if __name__ == "__main__":
 
         if location.visited:
             print(location.brief_description)
+            location.visited = False
         else:
             print(location.long_description)
 
+        # If there is a puzzle at the location they are at, ask if they want to do it.
+        if location.has_puzzle:
+            game.encountered_puzzle()
         # If there is an item avaiable at the location to pick up, tell them
         if location.items:
             game.display_items(location)
 
         # Display possible actions at this location
-        print("What to do? Choose from: look, inventory, score, undo, log, quit")
+        print("What to do? Choose from: look, inventory, score, undo, log, quit, time")
         print("At this location, you can also:")
         for action in location.available_commands:
             print("-", action)
@@ -300,6 +335,8 @@ if __name__ == "__main__":
                 game_log.display_events()
             if choice == "quit":
                 game.quit()
+            if choice == "time":
+                game.display_time()
 
         else:
             # Handle non-menu actions

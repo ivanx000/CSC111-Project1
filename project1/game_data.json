@@ -10,7 +10,8 @@
         "go east": 2,
         "pick up": -1
       },
-      "items": ["Phone"]
+      "items": ["Phone"],
+      "Puzzle": True
     },
     {
       "id": 2,
@@ -22,7 +23,8 @@
         "go west": 1,
         "pick up": -1
       },
-      "items": ["USB Drive", "Laptop Charger"]
+      "items": ["USB Drive", "Laptop Charger"],
+      "Puzzle": False
     },
     {
       "id": 3,
@@ -33,7 +35,8 @@
         "go west": 2,
         "drop": -1
       },
-      "items": []
+      "items": [],
+      "Puzzle": True
     },
     {
       "id": 4,
@@ -45,44 +48,48 @@
         "go south": 5,
         "pick up": -1
       },
-      "items": ["Lucky Mug"]
+      "items": ["Lucky Mug"],
+      "Puzzle": True
     },
     {
       "id": 5,
       "name": "Lost and found",
-      "brief_description": "You are at the lost and found",
-      "long_description": "You are at the lost and found. Do you have any lost items to return?",
+      "brief_description": "You are at the lost and found. There are exits to the North and East.",
+      "long_description": "You are at the lost and found. Do you have any lost items to return? There are exits to the North and East.",
       "available_commands": {
         "go north": 4,
         "go east": 6,
         "drop": -1
       },
-      "items": []
+      "items": [],
+      "Puzzle": True
     },
     {
       "id": 6,
       "name": "Convocation Hall",
-      "brief_description": "You are at Convocation Hall",
-      "long_description": "You are at Convocation Hall. A class just ended and everyone is leaving the building. You notice a Wallet on the floor, someone must have dropped it. Returning it seems like the right thing to do.",
+      "brief_description": "You are at Convocation Hall. There are exits to the East and West",
+      "long_description": "You are at Convocation Hall. A class just ended and everyone is leaving the building. You notice a Wallet on the floor, someone must have dropped it. Returning it seems like the right thing to do. There are exits to the East and West.",
       "available_commands": {
         "go east": 7,
         "go west": 5,
         "pick up": -1
       },
-      "items": ["Wallet"]
+      "items": ["Wallet"],
+      "Puzzle": False
+
     },
     {
       "id": 7,
       "name": "Dorm Room",
-      "brief_description": "You are at your dorm room! This is where you can submit your assignment.",
-      "long_description": "You are at your dorm room! This is where you can submit your assignment.",
+      "brief_description": "You are at your dorm room! This is where you can submit your assignment. There is an exit to the West.",
+      "long_description": "You are at your dorm room! This is where you can submit your assignment. Hopefully you have all your items that are required to submit your assignment. There is an exit to the West.",
       "available_commands": {
         "go west": 6,
         "submit": -1
       },
-      "items": []
+      "items": [],
+      "Puzzle": False
     }
-
   ],
   "items": [
     {

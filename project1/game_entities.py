@@ -19,6 +19,8 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2025 CSC111 Teaching Team
 """
 from dataclasses import dataclass
+import requests
+import random
 
 
 @dataclass
@@ -53,9 +55,10 @@ class Location:
     available_commands: dict[str, int]
     items: list[str]
     visited: bool
+    has_puzzle: bool
 
     def __init__(self, location_id, name, brief_description, long_description, available_commands, items,
-                 visited=False) -> None:
+                 has_puzzle, visited=False) -> None:
         """Initialize a new location.
 
         """
@@ -67,6 +70,7 @@ class Location:
         self.available_commands = available_commands
         self.items = items
         self.visited = visited
+        self.has_puzzle = has_puzzle
 
 
 @dataclass
@@ -101,9 +105,47 @@ class Item:
 # - Puzzle class to represent special locations (could inherit from Location class if it seems suitable)
 # - Player class
 # etc.
-@dataclass
 class Puzzle:
-    """A word puzzle in our text adventure game"""
+    """A word puzzle in our text adventure game
+
+    Instance Attributes:
+        - random_word: A random word
+        - scrambled: random_word but scrambled
+        - tries: The amount of tries the player gets to unscramble the word
+        - points: The amount of points for unscrambling the word
+
+    Representation Invarients:
+        - self.random_word != ""
+        - self.scrambled != ""
+        - self.points >= 0
+    """
+
+    random_word: str
+    scrambled: str
+    tries: int
+    points: int
+
+    def __init__(self) -> None:
+        """Initializes a new Puzzle"""
+
+        self.random_word = self.get_random_word()
+        self.scrambled = self.scramble_word(self.random_word)
+        self.tries = 3
+        self.points = 5
+
+    def get_random_word(self) -> str:
+        """Generates a new random word"""
+        response = requests.get("https://random-word-api.herokuapp.com/word")
+        return response.json()[0] if response.status_code == 200 else "error"
+
+    def scramble_word(self, word: str) -> str:
+        """Scrambles word"""
+        if len(word) <= 1:
+            return word  # No need to scramble single-letter words
+
+        word_list = list(word)
+        random.shuffle(word_list)  # Shuffle the letters
+        return ''.join(word_list)
 
 
 if __name__ == "__main__":
