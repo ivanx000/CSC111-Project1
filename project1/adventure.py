@@ -131,22 +131,27 @@ class AdventureGame:
         """Displays each item the user currently has"""
         items = ""
         for item_obj in self.inventory:
-            items += " " + item_obj.name
+            items += ", " + item_obj.name
 
-        print("Inventory:" + items)
+        print("Inventory:" + items[1:])
 
     def pickup_items(self, curr_location: Location) -> None:
         """Displays each item the player picked up and updates inventory"""
+        if not curr_location.items:
+            print("There are no items at this location currently.")
+            return
 
         for item_obj in self._items:
             # This is to account for the fact that the items are listed as
             # strings in the location data instead of item objects
             if item_obj.name in curr_location.items:
                 print("You picked up a: " + item_obj.name)
+                curr_location.items.remove(item_obj.name)  # Updates the current locations items
                 if item_obj.name in self.required_items:
                     print("You need this item to submit your project! Bring this back with you to your dorm room.")
                 else:
-                    print("You can drop " + item_obj.name + " at: " + self._locations[item_obj.target_position].name)
+                    print("You can drop this " + item_obj.name + " "
+                          "at: " + self._locations[item_obj.target_position].name)
                 self.inventory.append(item_obj)
 
     def display_items(self, curr_location: Location) -> None:
@@ -158,16 +163,16 @@ class AdventureGame:
             if item_obj.name in curr_location.items:
                 print("There is a " + item_obj.name + " at this location")
 
-    def drop_item(self) -> None:
+    def drop_item(self, curr_location: Location) -> None:
         """Handles drop item case"""
         if not self.inventory:  # No items in inventory
             print("There are no items to drop.")
         else:  # There are items
             possible_items = []
-            print("Available items to drop: ")
+            print("Available items to drop: (Keep in mind you cannot get this item back) ")
             for item_obj in self.inventory:
                 print("-" + item_obj.name)
-                possible_items.append(item_obj.name)
+                possible_items.append(item_obj.name.lower())
             drop_choice = input("\nEnter item: ").lower().strip()
             while drop_choice not in possible_items:
                 print("You do not have that item; try again.")
@@ -175,8 +180,12 @@ class AdventureGame:
 
             print("You decided to drop: " + drop_choice)
             for item_obj in self.inventory:
-                if item_obj.name == drop_choice:
+                if item_obj.name.lower() == drop_choice:
+                    if item_obj.target_position == curr_location.id_num:
+                        print("You gained " + str(item_obj.target_points) + " points!")
+                        self.score += item_obj.target_points
                     self.inventory.remove(item_obj)
+                    return
 
     def display_score(self) -> None:
         """Displays the current score"""
@@ -242,25 +251,32 @@ class AdventureGame:
     def encountered_puzzle(self) -> None:
         """Handles puzzle case"""
         possible_choices = ['yes', 'no']
-        print("You have encountered a puzzle! Would you like to do it?")
+        print("You have encountered a puzzle! Would you like to do it? You will not get this option again.")
         puzzle_choice = input("\nEnter Yes/No: ").lower().strip()
         while puzzle_choice not in possible_choices:
             print("That was an invalid input; try again.")
             puzzle_choice = input("\nEnter Yes/No: ").lower().strip()
 
         if puzzle_choice == "yes":
+            location.has_puzzle = False
             current_puzzle = Puzzle()
             print("Here is a scrambled word: " + current_puzzle.scrambled)
-            print("You have " + str(current_puzzle.tries) + " to unscramble this word.")
+            print("You have " + str(current_puzzle.tries) + " tries to unscramble this word.")
             while current_puzzle.tries > 0:
                 guess = input("\nEnter guess: ").lower().strip()
                 if guess == current_puzzle.random_word:
                     print("Congratulations! You unscrambled the word " + current_puzzle.random_word + ".")
                     print("You gained " + str(current_puzzle.points) + " points.")
+                    self.score += current_puzzle.points
                     return
+                else:
+                    print("Wrong answer! Try again.")
                 current_puzzle.tries -= 1
+        else:
+            location.has_puzzle = False
+            return
 
-        print("You failed the puzzle. Better luck next time!")
+        print("You failed the puzzle. The word was: " + current_puzzle.random_word + ". Better luck next time!")
 
 
 if __name__ == "__main__":
@@ -303,16 +319,13 @@ if __name__ == "__main__":
 
         if location.visited:
             print(location.brief_description)
-            location.visited = False
         else:
             print(location.long_description)
+            location.visited = True
 
         # If there is a puzzle at the location they are at, ask if they want to do it.
         if location.has_puzzle:
             game.encountered_puzzle()
-        # If there is an item avaiable at the location to pick up, tell them
-        if location.items:
-            game.display_items(location)
 
         # Display possible actions at this location
         print("What to do? Choose from: look, inventory, score, undo, log, quit, time")
@@ -348,7 +361,7 @@ if __name__ == "__main__":
         else:
             # Handle non-menu actions
             if choice == "drop":
-                game.drop_item()
+                game.drop_item(location)
             elif choice == "pick up":
                 game.pickup_items(location)  # only locations with items have the available command "pick up"
             elif choice == "submit":
