@@ -54,8 +54,8 @@
     {
       "id": 5,
       "name": "Lost and found",
-      "brief_description": "You are at the lost and found. There are exits to the North and East.",
-      "long_description": "You are at the lost and found. Do you have any lost items to return? There are exits to the North and East.",
+      "brief_description": "You are at the Lost and Found. There are exits to the North and East.",
+      "long_description": "You are at the Lost and Found. Do you have any lost items to return? There are exits to the North and East.",
       "available_commands": {
         "go north": 4,
         "go east": 6,

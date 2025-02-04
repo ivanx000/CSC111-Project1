@@ -86,7 +86,7 @@ class AdventureGame:
         self.inventory = []
         self.required_items = {"USB Drive", "Laptop Charger", "Lucky Mug"}
         self.score = 0
-        self.time = 120  # 120 minutes is less than a couple of hours to submit the assignment
+        self.time = 240  # 4 hours to submit the assignment
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -150,7 +150,7 @@ class AdventureGame:
                 if item_obj.name in self.required_items:
                     print("You need this item to submit your project! Bring this back with you to your dorm room.")
                 else:
-                    print("You can drop this " + item_obj.name + " "
+                    print("You should drop this " + item_obj.name + " "
                           "at: " + self._locations[item_obj.target_position].name)
                 self.inventory.append(item_obj)
 
@@ -168,15 +168,19 @@ class AdventureGame:
         if not self.inventory:  # No items in inventory
             print("There are no items to drop.")
         else:  # There are items
-            possible_items = []
-            print("Available items to drop: (Keep in mind you cannot get this item back) ")
+            possible_items = ['quit']
+            print("Available items to drop: (Keep in mind you cannot get this item back, "
+                  "if you change your mind, enter quit) ")
             for item_obj in self.inventory:
                 print("-" + item_obj.name)
                 possible_items.append(item_obj.name.lower())
-            drop_choice = input("\nEnter item: ").lower().strip()
+            drop_choice = input("\nEnter item or quit: ").lower().strip()
             while drop_choice not in possible_items:
-                print("You do not have that item; try again.")
+                print("You do not have that item; try again or quit.")
                 drop_choice = input("\nEnter item: ").lower().strip()
+
+            if drop_choice == "quit":
+                return
 
             print("You decided to drop: " + drop_choice)
             for item_obj in self.inventory:
