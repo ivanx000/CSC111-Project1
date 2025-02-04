@@ -36,13 +36,11 @@ class AdventureGame:
     Instance Attributes:
         - current_location_id: integer value of the current location id
         - ongoing: boolean value to check if the game is still going
-        - score: the players score, which can determine if they win or not
-        - inventory: inventory of all the items the player currently has
-        - time: the amount time the player has before the deadline
+        - data: a list of inventory, score and time values
 
     Representation Invariants:
-        - self.score >= 0
-        - self.time >= 0
+        - self.data[1] >= 0
+        - self.data[2] >= 0
     """
 
     # Private Instance Attributes (do NOT remove these two attributes):
@@ -52,9 +50,7 @@ class AdventureGame:
 
     _locations: dict[int, Location]
     _items: list[Item]
-    inventory: list[Item]
-    score: int
-    time: int
+    data: list[list[Item] | int]
     required_items: set[str]
     current_location_id: int  # Suggested attribute, can be removed
     ongoing: bool  # Suggested attribute, can be removed
@@ -83,10 +79,8 @@ class AdventureGame:
         self.current_location_id = initial_location_id  # game begins at this location
         self.ongoing = True  # whether the game is ongoing
 
-        self.inventory = []
         self.required_items = {"USB Drive", "Laptop Charger", "Lucky Mug"}
-        self.score = 0
-        self.time = 150  # 4 hours to submit the assignment
+        self.data = [[], 0, 150]  # inventory, score and time data
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -129,11 +123,14 @@ class AdventureGame:
 
     def display_inventory(self) -> None:
         """Displays each item the user currently has"""
-        items = ""
-        for item_obj in self.inventory:
-            items += ", " + item_obj.name
+        if not self.data[0]:
+            print("Your inventory is empty.")
+        else:
+            items = ""
+            for item_obj in self.data[0]:
+                items += ", " + item_obj.name
 
-        print("Inventory:" + items[1:])
+            print("Inventory:" + items[1:])
 
     def pickup_items(self, curr_location: Location) -> None:
         """Displays each item the player picked up and updates inventory"""
@@ -152,7 +149,7 @@ class AdventureGame:
                 else:
                     print("You should drop this " + item_obj.name + " "
                           "at: " + self._locations[item_obj.target_position].name)
-                self.inventory.append(item_obj)
+                self.data[0].append(item_obj)
 
     def display_items(self, curr_location: Location) -> None:
         """Displays each item at the players current location"""
@@ -165,13 +162,13 @@ class AdventureGame:
 
     def drop_item(self, curr_location: Location) -> None:
         """Handles drop item case"""
-        if not self.inventory:  # No items in inventory
+        if not self.data[0]:  # No items in inventory
             print("There are no items to drop.")
         else:  # There are items
             possible_items = ['quit']
             print("Available items to drop: (Keep in mind you cannot get this item back, "
                   "if you change your mind, enter quit) ")
-            for item_obj in self.inventory:
+            for item_obj in self.data[0]:
                 print("-" + item_obj.name)
                 possible_items.append(item_obj.name.lower())
             drop_choice = input("\nEnter item or quit: ").lower().strip()
@@ -183,36 +180,40 @@ class AdventureGame:
                 print("You dropped nothing.")
                 return
 
-            print("You decided to drop: " + drop_choice)
-            for item_obj in self.inventory:
-                if item_obj.name.lower() == drop_choice:
-                    if item_obj.target_position == curr_location.id_num:
-                        print("You gained " + str(item_obj.target_points) + " points!")
-                        self.score += item_obj.target_points
-                    self.inventory.remove(item_obj)
-                    return
+            game.remove_item(drop_choice, curr_location)
+
+    def remove_item(self, drop_choice: str, curr_location: Location) -> None:
+        """Removes item from inventory after dropping it"""
+        print("You decided to drop: " + drop_choice)
+        for item_obj in self.data[0]:
+            if item_obj.name.lower() == drop_choice:
+                if item_obj.target_position == curr_location.id_num:
+                    print("You gained " + str(item_obj.target_points) + " points!")
+                    self.data[1] += item_obj.target_points
+                self.data[0].remove(item_obj)
+                return
 
     def display_score(self) -> None:
         """Displays the current score"""
-        print("Your score is: " + str(self.score))
+        print("Your score is: " + str(self.data[1]))
 
     def update_time(self, command: str, curr_location: Location) -> None:
         """Updates the time based on the choice of the user"""
         if command in menu:
-            self.time -= menu[command]
+            self.data[2] -= menu[command]
         if command in curr_location.available_commands:
-            self.time -= 10  # A command for specific locations account for more time compared to menu options
+            self.data[2] -= 10  # A command for specific locations account for more time compared to menu options
 
     def submit(self) -> None:
         """Win condition of the game, submits the assignment"""
-        inventory_names = {item.name for item in self.inventory}
+        inventory_names = {item.name for item in self.data[0]}
         if self.required_items.issubset(inventory_names):  # Player has all the required items
-            if self.time > 0:  # Player returned all the items on time
+            if self.data[2] > 0:  # Player returned all the items on time
                 print("Congratulations! You made it back to your dorm room in "
                       "time with all your items and you submitted your assignment on time.")
                 game.quit()
             else:  # Player has all items but did not make it in time
-                if (self.time + self.score) > 0:  # Player accumulated enough points so they still win
+                if (self.data[2] + self.data[1]) > 0:  # Player accumulated enough points so they still win
                     print("You made it back with all your items, but the deadline has already passed. "
                           "However, the instructor decided to give you an extension due to your extra points. "
                           "Congratulations!")
@@ -242,16 +243,16 @@ class AdventureGame:
         last_event = game_log.last
         # Gives the user back the time that they lost from the command they chose
         if last_event.prev.next_command in menu:  # next_command is a menu command
-            self.time += menu[last_event.prev.next_command]
+            self.data[2] += menu[last_event.prev.next_command]
         else:  # next_command is a location specific command
-            self.time += 10
+            self.data[2] += 10
         self.current_location_id = last_event.prev.id_num
         game_log.remove_last_event()
 
     def display_time(self) -> None:
         """Displays the amount of time before deadline"""
 
-        print("You have " + str(self.time) + " minutes left before the deadline.")
+        print("You have " + str(self.data[2]) + " minutes left before the deadline.")
 
     def encountered_puzzle(self) -> None:
         """Handles puzzle case"""
@@ -272,7 +273,7 @@ class AdventureGame:
                 if guess == current_puzzle.random_word:
                     print("Congratulations! You unscrambled the word " + current_puzzle.random_word + ".")
                     print("You gained " + str(current_puzzle.points) + " points.")
-                    self.score += current_puzzle.points
+                    self.data[1] += current_puzzle.points
                     return
                 else:
                     print("Wrong answer! Try again.")
