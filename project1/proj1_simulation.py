@@ -111,33 +111,35 @@ if __name__ == "__main__":
         'disable': ['R1705', 'E9998', 'E9999']
     })
 
-    win_walkthrough = []  # Create a list of all the commands needed to walk through your game to win it
-    expected_log = []  # Update this log list to include the IDs of all locations that would be visited
-    # Uncomment the line below to test your walkthrough
+    win_walkthrough = ["no", "go east", "pick up", "go west", "go south",
+                       "no", "pick up", "go south", "no", "go east", "go east", "submit"]
+    # "no" does not get added to the event log
+    expected_log = [1, 2, 2, 1, 4, 4, 5, 6, 6, 7]
     sim = AdventureGameSimulation('game_data.json', 1, win_walkthrough)
     assert expected_log == sim.get_id_log()
 
-    # Create a list of all the commands needed to walk through your game to reach a 'game over' state
-    lose_demo = []
-    expected_log = []  # Update this log list to include the IDs of all locations that would be visited
-    # Uncomment the line below to test your demo
+    lose_demo = ["no", "pick up", "go east", "pick up", "go east", "no", "drop", "quit"]
+    # "no" does not get added to the event log
+    # "quit" does not quit the game, in this case, it is to cancel the drop. It also doesn't get added to the event log
+    expected_log = [1, 1, 2, 2, 3, 3]
     sim = AdventureGameSimulation('game_data.json', 1, lose_demo)
     assert expected_log == sim.get_id_log()
 
-    # TODO: Add code below to provide walkthroughs that show off certain features of the game
-    # TODO: Create a list of commands involving visiting locations, picking up items, and then
-    #   checking the inventory, your list must include the "inventory" command at least once
-    # inventory_demo = [..., "inventory", ...]
-    # expected_log = []
-    # assert expected_log == AdventureGameSimulation(...)
+    inventory_demo = [..., "inventory", ...]
+    expected_log = []
+    sim = AdventureGameSimulation('game_data.json', 1, inventory_demo)
+    assert expected_log == sim.get_id_log()
 
-    # scores_demo = [..., "score", ...]
-    # expected_log = []
-    # assert expected_log == AdventureGameSimulation(...)
+    scores_demo = ["no", "score", "pick up", "go east", "go east", "no", "drop", "phone", "score", "quit"]
+    # checks score, should be 0 at first. After you drop an item, you get points and the score should update.
+    expected_log = [1, 1, 1, 2, 3, 3, 3]
+    sim = AdventureGameSimulation('game_data.json', 1, scores_demo)
+    assert expected_log == sim.get_id_log()
 
-    # Add more enhancement_demos if you have more enhancements
-    # enhancement1_demo = [...]
-    # expected_log = []
-    # assert expected_log == AdventureGameSimulation(...)
+    puzzle_demo = ["yes", "quit"]
+    # "yes" means you accept the puzzle
+    expected_log = [1]
+    sim = AdventureGameSimulation('game_data.json', 1, puzzle_demo)
+    assert expected_log == sim.get_id_log()
 
     # Note: You can add more code below for your own testing purposes

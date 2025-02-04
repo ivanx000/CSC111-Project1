@@ -86,7 +86,7 @@ class AdventureGame:
         self.inventory = []
         self.required_items = {"USB Drive", "Laptop Charger", "Lucky Mug"}
         self.score = 0
-        self.time = 240  # 4 hours to submit the assignment
+        self.time = 150  # 4 hours to submit the assignment
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -180,6 +180,7 @@ class AdventureGame:
                 drop_choice = input("\nEnter item: ").lower().strip()
 
             if drop_choice == "quit":
+                print("You dropped nothing.")
                 return
 
             print("You decided to drop: " + drop_choice)
