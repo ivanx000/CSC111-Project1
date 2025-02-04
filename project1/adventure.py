@@ -244,7 +244,7 @@ class AdventureGame:
             self.time += menu[last_event.prev.next_command]
         else:  # next_command is a location specific command
             self.time += 10
-        curr_event.id_num = last_event.prev.id_num
+        self.current_location_id = last_event.prev.id_num
         game_log.remove_last_event()
 
     def display_time(self) -> None:
@@ -318,7 +318,7 @@ if __name__ == "__main__":
 
         location = game.get_location()
 
-        curr_event = Event(location.id_num, location.long_description, choice, None, None)
+        curr_event = Event(location.id_num, location.long_description, None, None, None)
         game_log.add_event(curr_event, choice)
 
         if location.visited:
