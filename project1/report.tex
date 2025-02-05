@@ -27,16 +27,53 @@ Example game map below (edit it to show your actual game map):
 Starting location is: 1
 
 \section*{Game solution}
-List of commands:
+List of commands: win_walkthrough = ["no", "go east", "pick up", "go west", "go south", "no"
+                       "pick up", "go south", "no", "go east", "go east", "submit"]
 
-\section*{Lose condition(s)}
+\section*{Lose condition 1}
 Description of how to lose the game:
+1st way to lose the game:
+    - There is a time value in minutes. It is set to 150.
+    - Each action the player does has an associated time with it.
+    - In this case, the commands in "available_commands" account for 10 minutes. "look" and "inventory account for 5 minutes. The rest are 0.
 
-List of commands:
+List of commands: lose_demo = ["no", "pick up", "go east", "pick up", "go east", "no"
+                 "drop", "quit", "go west", "go west", "go south", "no"
+                 "pick up", "go south", "no", "go east", "pick up",
+                 "go west", "drop", "quit", "go east", "go east", "submit"]
 
 Which parts of your code are involved in this functionality:
+    - At the end of the loop, the time is updated accordingly using the update_time() function
+    - The lose case is handled in the submit() function
 
-% Copy-paste the above if you have multiple lose conditions and describe each possible way to lose the game
+\section*{Lose condition 2}
+Description of how to lose the game:
+2nd way to lose the game:
+    - There is a maximum amount of moves the player gets
+    - If they exceed it, they lose.
+
+List of commands: lose_demo = ["no", "pick up", "pick up", "pick up", "pick up", "pick up", "pick up",
+                               "pick up", "pick up", "pick up", "pick up", "pick up", "pick up", "pick up",
+                               "pick up", "pick up", "pick up", "pick up", "pick up", "pick up", "pick up",
+                               "pick up", "pick up", "pick up", "pick up", "pick up", "pick up"]
+
+Which parts of your code are involved in this functionality:
+    - In the AdventureGame class, the data attribute has a value with the total moves. It is set to 25
+    - In the while loop in adventure.py, it checks if you have more than 0 moves and updates the amount of moves you have after each loop
+
+\section*{Lose condition 3}
+Description of how to lose the game:
+3nd way to lose the game:
+    - You can drop items
+    - If you drop an item that is required for submission, you cannot get it back and you can never win.
+
+List of commands: lose_demo = ["no", "go east", "pick up", "go east", "no", "drop", "USB Drive"]
+Note: You don't lose straight away, but because you dropped a required item, you are never able to win and eventually you will run out of moves and lose.
+Note: You can also "undo" but if you do not do it right away it won't matter. Since undo only undoes the most recent event.
+
+Which parts of your code are involved in this functionality:
+    - The drop_item() function handles the dropping feature
+    - The undo() function handles the undo feature
 
 \section*{Inventory}
 
@@ -49,7 +86,7 @@ Which parts of your code are involved in this functionality:
     \begin{itemize}
     \item Item name: Phone
     \item Item start location ID: 1
-    \item Item target location ID: 4
+    \item Item target location ID: 3
     \end{itemize}
         \item For Item 2:
     \begin{itemize}
@@ -79,7 +116,10 @@ Which parts of your code are involved in this functionality:
 \end{enumerate}
 
     \item Exact command(s) that should be used to pick up an item (choose any one item for this example), and the command(s) used to use/drop the item (can copy the list you assigned to \texttt{inventory\_demo} in the \texttt{project1\_simulation.py} file)
+        Phone demo = ["no", "inventory", ]
     \item Which parts of your code (file, class, function/method) are involved in handling the \texttt{inventory} command:
+        - The AdventureGame class has a data attribute that has a list of items as one of its values. This value is current inventory of the player.
+        - Functinos that involve the inventory are: submit(), drop_item(), remove_item(), pickup_items(), display_inventory().
 \end{enumerate}
 
 \section*{Score}
@@ -93,9 +133,13 @@ Which parts of your code are involved in this functionality:
         5 points
 
     \item Copy the list you assigned to \texttt{scores\_demo} in the \texttt{project1\_simulation.py} file into this section of the report:
-
+        scores_demo = ["no", "score", "pick up", "go east", "go east", "drop", "phone", "score", "quit"]
 
     \item Which parts of your code (file, class, function/method) are involved in handling the \texttt{score} functionality:
+        - The AdventureGame class has a data attribute that has the score as one of its values
+        - The function display_score displays the score
+        - There is no single function that updates the score, it is just manually added wherever there is an action that rewards points
+        - These functions are: remove_item() and encountered_puzzle()
 \end{enumerate}
 
 \section*{Enhancements}
@@ -103,8 +147,14 @@ Which parts of your code are involved in this functionality:
     \item Describe your enhancement \#1 here
     \begin{itemize}
         \item Brief description of what the enhancement is (if it's a puzzle, also describe what steps the player must take to solve it):
+            - The player is given a scrambled word and they have to unscramble it in order to solve the puzzle
+            - They get 3 attempts
+            - If they manage to guess it within 3 tries, they are rewarded points
         \item Complexity level (choose from low/medium/high):
+            - Medium
         \item Reasons you believe this is the complexity level (e.g., mention implementation details, how much code did you have to add/change from the baseline, what challenges did you face, etc.)
+            - I believe the complexity level of this enhancement is medium because it involves making a request to an API
+            - In terms of code, there was very little to write, but it required some learning of some topics outside of the course
     \end{itemize}
 
     % Uncomment below section if you have more enhancements; copy-paste as needed

@@ -60,12 +60,15 @@ class AdventureGameSimulation:
         """
 
         for command in commands:
-            new_location_id = current_location.available_commands[command]
-            new_location = self._game.get_location(new_location_id)
-            new_event = Event(new_location_id, new_location.long_description, command)
-
-            self._events.add_event(new_event, command)
-            current_location = new_location
+            curr_event = Event(current_location.id_num, current_location.long_description, None, None, None)
+            self._events.add_event(curr_event, command)
+            if command in current_location.available_commands:
+                # If it is not an available command, it is a menu command which does not change location.
+                location_id = current_location.available_commands[command]
+                if location_id > 0:
+                    # Some available commands do not change location. This handles the case where the location changes
+                    new_location = self._game.get_location(location_id)
+                    current_location = new_location
 
     def get_id_log(self) -> list[int]:
         """
@@ -111,35 +114,40 @@ if __name__ == "__main__":
         'disable': ['R1705', 'E9998', 'E9999']
     })
 
-    win_walkthrough = ["no", "go east", "pick up", "go west", "go south",
-                       "no", "pick up", "go south", "no", "go east", "go east", "submit"]
-    # "no" does not get added to the event log
-    expected_log = [1, 2, 2, 1, 4, 4, 5, 6, 6, 7]
-    sim = AdventureGameSimulation('game_data.json', 1, win_walkthrough)
-    assert expected_log == sim.get_id_log()
+    win_walkthrough = ["go east", "pick up", "go west", "go south",
+                       "pick up", "go south", "go east", "go east", "submit"]
+    expected_log = [1, 1, 2, 2, 1, 4, 4, 5, 6, 7]
+    win_sim = AdventureGameSimulation('game_data.json', 1, win_walkthrough)
+    assert expected_log == win_sim.get_id_log()
 
-    lose_demo = ["no", "pick up", "go east", "pick up", "go east", "no", "drop", "quit"]
-    # "no" does not get added to the event log
-    # "quit" does not quit the game, in this case, it is to cancel the drop. It also doesn't get added to the event log
-    expected_log = [1, 1, 2, 2, 3, 3]
-    sim = AdventureGameSimulation('game_data.json', 1, lose_demo)
-    assert expected_log == sim.get_id_log()
+    lose_demo = ["pick up", "go east", "pick up", "go east",
+                 "drop", "go west", "go west", "go south",
+                 "pick up", "go south", "go east", "pick up",
+                 "go west", "drop", "go east", "go east", "submit"]
+    # For drop commands, this is assuming they don't drop anything and waste the command
+    expected_log = [1, 1, 1, 2, 2, 3, 3, 2, 1, 4, 4, 5, 6, 6, 5, 5, 6, 7]
+    lose_sim = AdventureGameSimulation('game_data.json', 1, lose_demo)
+    assert expected_log == lose_sim.get_id_log()
 
-    inventory_demo = [..., "inventory", ...]
-    expected_log = []
-    sim = AdventureGameSimulation('game_data.json', 1, inventory_demo)
-    assert expected_log == sim.get_id_log()
+    inventory_demo = ["inventory", "pick up", "inventory", "quit"]
+    expected_log = [1, 1, 1, 1, 1]
+    inventory_sim = AdventureGameSimulation('game_data.json', 1, inventory_demo)
+    assert expected_log == inventory_sim.get_id_log()
 
-    scores_demo = ["no", "score", "pick up", "go east", "go east", "no", "drop", "phone", "score", "quit"]
+    scores_demo = ["score", "pick up", "go east", "go east", "drop", "phone", "score", "quit"]
     # checks score, should be 0 at first. After you drop an item, you get points and the score should update.
-    expected_log = [1, 1, 1, 2, 3, 3, 3]
-    sim = AdventureGameSimulation('game_data.json', 1, scores_demo)
-    assert expected_log == sim.get_id_log()
+    expected_log = [1, 1, 1, 1, 2, 3, 3, 3, 3]
+    scores_sim = AdventureGameSimulation('game_data.json', 1, scores_demo)
+    assert expected_log == scores_sim.get_id_log()
+
+    time_demo = ["time", "pick up", "time", "go east", "time", "quit"]
+    # checks time, should be 150 at first. After you do an action, the time should update accordingly.
+    expected_log = [1, 1, 1, 1, 1, 2, 2]
+    time_sim = AdventureGameSimulation('game_data.json', 1, time_demo)
+    assert expected_log == time_sim.get_id_log()
 
     puzzle_demo = ["yes", "quit"]
     # "yes" means you accept the puzzle
-    expected_log = [1]
-    sim = AdventureGameSimulation('game_data.json', 1, puzzle_demo)
-    assert expected_log == sim.get_id_log()
+    # Because of how puzzles are made, to test it, you must run the adventure.py file and play the game.
 
     # Note: You can add more code below for your own testing purposes

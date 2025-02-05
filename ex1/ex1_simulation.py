@@ -122,7 +122,7 @@ class AdventureGameSimulation:
         self._game = SimpleAdventureGame(game_data_file, initial_location_id)
 
         initial_location = self._game.get_location()
-        first_event = Event(initial_location.id_num, initial_location.description)
+        first_event = Event(initial_location.id_num, initial_location.description, None, None, None)
         self._events.add_event(first_event)
 
         self.generate_events(commands, initial_location)
@@ -138,7 +138,7 @@ class AdventureGameSimulation:
         for command in commands:
             new_location_id = current_location.available_commands[command]
             new_location = self._game.get_location(new_location_id)
-            new_event = Event(new_location_id, new_location.description, command)
+            new_event = Event(new_location_id, new_location.description, None, None, None)
 
             self._events.add_event(new_event, command)
             current_location = new_location
@@ -178,7 +178,6 @@ class AdventureGameSimulation:
 
 
 if __name__ == "__main__":
-    pass
     # When you are ready to check your work with python_ta, uncomment the following lines.
     # (Delete the "#" and space before each line.)
     # IMPORTANT: keep this code indented inside the "if __name__ == '__main__'" block

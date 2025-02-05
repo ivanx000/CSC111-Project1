@@ -41,6 +41,7 @@ class AdventureGame:
     Representation Invariants:
         - self.data[1] >= 0
         - self.data[2] >= 0
+        - self.data[3] >= 0
     """
 
     # Private Instance Attributes (do NOT remove these two attributes):
@@ -80,7 +81,7 @@ class AdventureGame:
         self.ongoing = True  # whether the game is ongoing
 
         self.required_items = {"USB Drive", "Laptop Charger", "Lucky Mug"}
-        self.data = [[], 0, 150]  # inventory, score and time data
+        self.data = [[], 0, 150, 25, []]  # inventory, score, time, number of moves and dropped items
 
     @staticmethod
     def _load_game_data(filename: str) -> tuple[dict[int, Location], list[Item]]:
@@ -166,8 +167,8 @@ class AdventureGame:
             print("There are no items to drop.")
         else:  # There are items
             possible_items = ['quit']
-            print("Available items to drop: (Keep in mind you cannot get this item back, "
-                  "if you change your mind, enter quit) ")
+            print("Available items to drop: (Keep in mind you cannot get this item back. "
+                  "If you change your mind, enter quit) ")
             for item_obj in self.data[0]:
                 print("-" + item_obj.name)
                 possible_items.append(item_obj.name.lower())
@@ -190,6 +191,7 @@ class AdventureGame:
                 if item_obj.target_position == curr_location.id_num:
                     print("You gained " + str(item_obj.target_points) + " points!")
                     self.data[1] += item_obj.target_points
+                self.data[4].append(item_obj)
                 self.data[0].remove(item_obj)
                 return
 
@@ -246,6 +248,8 @@ class AdventureGame:
             self.data[2] += menu[last_event.prev.next_command]
         else:  # next_command is a location specific command
             self.data[2] += 10
+            if last_event.prev.next_command == "drop":  # If player drops an item and does undo, they get it back
+                self.data[0].append(self.data[4].pop())
         self.current_location_id = last_event.prev.id_num
         game_log.remove_last_event()
 
@@ -309,23 +313,29 @@ if __name__ == "__main__":
     }  # A mapping of menu options to the time (in minutes) it takes for each option
     choice = None
 
-    # Objective, get back to dorm before deadline with required items, return extra items for more points
+    # Objective: get back to dorm before deadline with required items, return extra items for more points
 
     # Note: You may modify the code below as needed; the following starter code is just a suggestion
     while game.ongoing:
         # Note: If the loop body is getting too long, you should split the body up into helper functions
         # for better organization. Part of your marks will be based on how well-organized your code is.
 
-        # Note: Print starting messages
+        # Total number of moves is 25, if they exceed it, they fail.
+        if game.data[3] == 0:
+            print("The deadline has passed. You failed.")
+            game.quit()
 
         location = game.get_location()
 
         curr_event = Event(location.id_num, location.long_description, None, None, None)
+        # Everything that is None gets handled by add_event()
         game_log.add_event(curr_event, choice)
 
         if location.visited:
+            print("LOCATION: " + location.name)
             print(location.brief_description)
         else:
+            print("LOCATION: " + location.name)
             print(location.long_description)
             location.visited = True
 
@@ -377,3 +387,4 @@ if __name__ == "__main__":
                 game.current_location_id = result  # Updates location
 
         game.update_time(choice, location)
+        game.data[3] -= 1
