@@ -19,8 +19,8 @@ please consult our Course Syllabus.
 This file is Copyright (c) 2025 CSC111 Teaching Team
 """
 from dataclasses import dataclass
-import requests
 import random
+import requests
 
 
 @dataclass
@@ -57,8 +57,9 @@ class Location:
     visited: bool
     has_puzzle: bool
 
-    def __init__(self, location_id, name, brief_description, long_description, available_commands, items,
-                 has_puzzle, visited=False) -> None:
+    def __init__(self, location_id: int, name: str, brief_description: str, long_description: str,
+                 available_commands: dict[str, int], items: list[str],
+                 has_puzzle: bool, visited: bool = False) -> None:
         """Initialize a new location.
 
         """
@@ -149,7 +150,6 @@ class Puzzle:
 
 
 if __name__ == "__main__":
-    pass
     # When you are ready to check your work with python_ta, uncomment the following lines.
     # (Delete the "#" and space before each line.)
     # IMPORTANT: keep this code indented inside the "if __name__ == '__main__'" block

@@ -26,9 +26,6 @@ from dataclasses import dataclass
 from typing import Optional
 
 
-# TODO: Copy/paste your ex1_event_logger code below, and modify it if needed to fit your game
-
-
 @dataclass
 class Event:
     """
@@ -136,7 +133,6 @@ class EventList:
 
 
 if __name__ == "__main__":
-    pass
     # When you are ready to check your work with python_ta, uncomment the following lines.
     # (Delete the "#" and space before each line.)
     # IMPORTANT: keep this code indented inside the "if __name__ == '__main__'" block
